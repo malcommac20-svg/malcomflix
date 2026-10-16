@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MALCOMFLIX & Admin Portal</title>
+    <!-- SVG Film Reel & Play Favicon (Custom Design) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23e50914'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23ffffff' stroke-width='2' stroke-dasharray='3 2'/><polygon points='13,10 22,16 13,22' fill='%23ffffff'/></svg>">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#e50914',
+                            darkRed: '#b81d24',
+                            black: '#08080a',
+                            card: '#121217',
+                            border: '#22222d',
+                            accent: '#f59e0b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #08080a;
+            color: #f3f4f6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .hero-bg {
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .bg-web-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(8rem, 28vw, 36rem);
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            user-select: none;
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        @keyframes swibble {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-3deg) scale(1.03); }
+            50% { transform: rotate(3deg) scale(1.05); }
+            75% { transform: rotate(-2deg) scale(1.03); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        .btn-swibble:hover {
+            animation: swibble 0.45s ease-in-out infinite alternate;
+        }
+
+        .glass-panel {
+            background: rgba(18, 18, 23, 0.82);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #08080a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22222d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e50914;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-brand-red selection:text-white">
+
+    <div id="appContainer" class="relative z-10 w-full min-h-screen flex flex-col">
+
+        <!-- GLOBAL HEADER / NAVBAR -->
+        <header class="sticky top-0 z-40 glass-panel border-b border-brand-border/80 px-4 sm:px-8 py-4 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="returnToLanding()">
+                <svg class="w-8 h-8 text-brand-red drop-shadow-[0_0_12px_rgba(229,9,20,0.6)]" viewBox="0 0 32 32">
+                    <rect width="32" height="32" rx="8" fill="#e50914"/>
+                    <circle cx="16" cy="16" r="10" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="3 2"/>
+                    <polygon points="13,10 22,16 13,22" fill="#ffffff"/>
+                </svg>
+                <span class="font-black text-xl sm:text-2xl tracking-wider text-white uppercase">MALCOM<span class="text-brand-red">FLIX</span></span>
+            </div>
+
+            <!-- Top Right Navigation -->
+            <div class="flex items-center gap-3">
+                <!-- User Sign In / Profile Container -->
+                <div id="userNavContainer">
+                    <button onclick="toggleUserAuthModal()" class="flex items-center gap-2 bg-brand-card hover:bg-brand-border text-gray-200 text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl border border-brand-border transition">
+                        <i class="fa-solid fa-user text-brand-red"></i>
+                        <span id="userNavLabel">Sign In</span>
+                    </button>
+                </div>
+
+                <!-- Admin Button -->
+                <button onclick="toggleAdminAuthModal()" class="flex items-center gap-2 bg-gradient-to-r from-red-950 to-brand-card hover:from-brand-red hover:to-brand-darkRed text-gray-200 hover:text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl border border-brand-red/40 hover:border-brand-red transition duration-300 shadow-lg">
+                    <i class="fa-solid fa-shield-halved text-brand-red"></i>
+                    <span class="hidden sm:inline">ADMIN PANEL</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ==================== LANDING HERO SECTION ==================== -->
+        <section id="landingScreen" class="hero-bg relative min-h-[calc(100vh-73px)] w-full flex flex-col justify-between p-6 sm:p-12 lg:p-16 transition-all duration-700">
+            <div class="bg-web-text">WEB</div>
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/70 to-brand-black/40 pointer-events-none"></div>
+
+            <!-- Staggered Layout: MALCOM Left | WEBSITE Lower Right -->
+            <div class="relative z-10 w-full max-w-7xl mx-auto my-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-8">
+                
+                <!-- Left Column: MALCOM -->
+                <div class="flex flex-col items-start justify-center text-left">
+                    <span class="text-xs font-extrabold tracking-widest text-brand-red uppercase mb-2 bg-brand-red/10 px-3 py-1 rounded-full border border-brand-red/20">
+                        <i class="fa-solid fa-crown mr-1"></i> Owner Portal
+                    </span>
+                    <h1 class="text-6xl sm:text-7xl lg:text-9xl font-black text-white tracking-tight uppercase drop-shadow-[0_10px_35px_rgba(0,0,0,0.8)]">
+                        MALCOM
+                    </h1>
+                    <p class="text-gray-300 max-w-md mt-4 text-sm sm:text-base leading-relaxed font-medium">
+                        The ultimate high-speed cinema streaming hub. Browse VJ Translated blockbusters, HD direct downloads, and manage content via Admin control.
+                    </p>
+                </div>
+
+                <!-- Right Column: WEBSITE (Staggered Lower) -->
+                <div class="flex flex-col items-start md:items-end justify-center md:pt-36 text-left md:text-right">
+                    <span class="text-xs font-extrabold tracking-widest text-gray-400 uppercase mb-2">Cinematic Vault</span>
+                    <h2 class="text-5xl sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-500 tracking-tight uppercase">
+                        WEBSITE
+                    </h2>
+                    
+                    <!-- Swibble Hover Continue Button -->
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4 items-center">
+                        <button onclick="enterMainSite()" class="btn-swibble group relative inline-flex items-center gap-3 bg-gradient-to-r from-brand-red to-brand-darkRed text-white font-black text-base sm:text-lg px-8 py-4 rounded-2xl shadow-[0_0_30px_rgba(229,9,20,0.5)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(229,9,20,0.8)]">
+                            <span>CONTINUE TO PLATFORM</span>
+                            <i class="fa-solid fa-arrow-right-long transition-transform duration-300 group-hover:translate-x-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="relative z-10 w-full text-center text-xs text-gray-500 font-mono py-2">
+                &copy; 2026 MALCOMFLIX &bull; SECURE MOVIE STREAMING & DOWNLOAD ENGINE
+            </footer>
+        </section>
+
+        <!-- ==================== MAIN DASHBOARD & CATALOG ==================== -->
+        <main id="mainDashboard" class="hidden min-h-screen w-full flex-col p-4 sm:p-8 max-w-7xl mx-auto space-y-8">
+            
+            <!-- User Welcome Banner (If Logged In) -->
+            <div id="userWelcomeBanner" class="hidden glass-panel p-4 rounded-2xl border border-brand-border flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brand-red/20 border border-brand-red/50 flex items-center justify-center text-brand-red font-black text-lg" id="userAvatarText">U</div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Welcome back, <span id="userNameDisplay" class="text-brand-red">User</span>!</h4>
+                        <p class="text-xs text-gray-400">Enjoy streaming and saving your favorite VJ movies to your watchlist.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleWatchlistView()" id="watchlistToggleBtn" class="bg-brand-black border border-brand-border hover:border-brand-red text-xs font-bold px-3 py-2 rounded-xl text-gray-300 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-bookmark text-amber-400"></i> My Watchlist (<span id="watchlistCount">0</span>)
+                    </button>
+                    <button onclick="logoutUser()" class="bg-red-950/40 border border-brand-red/40 hover:bg-brand-red text-xs font-bold px-3 py-2 rounded-xl text-gray-300 hover:text-white transition">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Recommendation / Assistant Banner -->
+            <div class="glass-panel p-6 rounded-3xl border border-brand-red/30 bg-gradient-to-r from-brand-card via-brand-card to-red-950/40 relative overflow-hidden space-y-4">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-brand-red/20 border border-brand-red/40 flex items-center justify-center text-brand-red text-lg shadow-lg">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-white text-base sm:text-lg">AI Movie Assistant</h3>
+                            <p class="text-xs text-gray-400">Ask Gemini for personalized VJ recommendations, mood matching, or movie suggestions!</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleAiChat()" class="text-xs font-bold bg-brand-red/20 border border-brand-red/50 text-brand-red hover:bg-brand-red hover:text-white px-3 py-1.5 rounded-xl transition">
+                        <i class="fa-solid fa-comments mr-1"></i> Quick AI Prompt
+                    </button>
+                </div>
+
+                <!-- Chat Box Collapsible -->
+                <div id="aiChatContainer" class="hidden space-y-3 pt-3 border-t border-brand-border">
+                    <div id="aiChatHistory" class="max-h-48 overflow-y-auto space-y-2 pr-2 text-xs font-medium">
+                        <div class="bg-brand-black/60 p-3 rounded-xl border border-brand-border text-gray-300">
+                            🤖 <strong class="text-white">Gemini:</strong> Hello! Tell me what kind of movie or VJ style you're in the mood for today!
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="aiUserPrompt" placeholder="e.g. Recommend a funny action movie translated by VJ Junior..." class="flex-1 bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:outline-none focus:border-brand-red" onkeydown="if(event.key==='Enter') askGeminiAssistant()">
+                        <button onclick="askGeminiAssistant()" class="bg-brand-red hover:bg-brand-darkRed text-white text-xs font-bold px-4 py-3 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-paper-plane"></i> Ask AI
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Bar: Search & Dual Filters (VJ Translators & Movie Types) -->
+            <div class="space-y-5">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-96">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="searchInput" oninput="filterMovies()" placeholder="Search movies, VJs, plot..." class="w-full bg-brand-card border border-brand-border text-sm text-white pl-11 pr-4 py-3 rounded-2xl focus:outline-none focus:border-brand-red shadow-inner">
+                    </div>
+                    <!-- Results Count -->
+                    <div class="text-xs font-bold text-gray-400">
+                        Showing <span id="totalMoviesCount" class="text-brand-red">0</span> movies in vault
+                    </div>
+                </div>
+
+                <!-- DUAL FILTER SECTION -->
+                <div class="space-y-3 bg-brand-card/50 p-4 rounded-2xl border border-brand-border/80">
+                    <!-- Filter 1: VJ Translators -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider min-w-[80px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-microphone-lines"></i> VJ Filter:
+                        </span>
+                        <div id="vjFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 flex-1"></div>
+                    </div>
+
+                    <!-- Filter 2: Movie Types / Genres -->
+                    <div class="flex items-center gap-3 pt-2 border-t border-brand-border/50">
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider min-w-[80px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-film"></i> Type Filter:
+                        </span>
+                        <div id="categoryFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 flex-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movies Grid -->
+            <div id="moviesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+        </main>
+    </div>
+
+    <!-- ==================== USER SIGN-IN / SIGN-UP MODAL ==================== -->
+    <div id="userAuthModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md rounded-3xl border border-brand-red/40 p-8 space-y-6 relative shadow-2xl">
+            <button onclick="toggleUserAuthModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white bg-brand-black p-2.5 rounded-full border border-brand-border">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            
+            <!-- Auth Modal Tabs -->
+            <div class="flex border-b border-brand-border pb-3 justify-center gap-6">
+                <button id="tabSignInBtn" onclick="switchAuthTab('signin')" class="text-base font-black text-white border-b-2 border-brand-red pb-1">Sign In</button>
+                <button id="tabSignUpBtn" onclick="switchAuthTab('signup')" class="text-base font-black text-gray-400 border-b-2 border-transparent pb-1 hover:text-white">Create Account</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="userSignInForm" onsubmit="handleUserSignIn(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Username or Email</label>
+                    <input type="text" id="signInIdentifier" required placeholder="e.g. malcom_fan" class="w-full bg-brand-black border border-brand-border text-sm text-white px-4 py-3 rounded-xl focus:outline-none focus:border-brand-red">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Password</label>
+                    <input type="password" id="signInPassword" required placeholder="Enter password..." class="w-full bg-brand-black border border-brand-border text-sm text-white px-4 py-3 rounded-xl focus:outline-none focus:border-brand-red">
+                </div>
+                <p id="userAuthErrorMsg" class="text-xs text-brand-red hidden font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Invalid credentials.</p>
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-red to-brand-darkRed text-white font-bold py-3.5 rounded-xl text-sm transition hover:opacity-90 shadow-lg">
+                    Sign In to MalcomFlix
+                </button>
+            </form>
+
+            <!-- Sign Up Form (Hidden by default) -->
+            <form id="userSignUpForm" onsubmit="handleUserSignUp(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Username</label>
+                    <input type="text" id="signUpUsername" required placeholder="Choose a username..." class="w-full bg-brand-black border border-brand-border text-sm text-white px-4 py-3 rounded-xl focus:outline-none focus:border-brand-red">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Email Address</label>
+                    <input type="email" id="signUpEmail" required placeholder="name@example.com" class="w-full bg-brand-black border border-brand-border text-sm text-white px-4 py-3 rounded-xl focus:outline-none focus:border-brand-red">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Password</label>
+                    <input type="password" id="signUpPassword" required placeholder="Create password..." class="w-full bg-brand-black border border-brand-border text-sm text-white px-4 py-3 rounded-xl focus:outline-none focus:border-brand-red">
+                </div>
+                <p id="userSignUpErrorMsg" class="text-xs text-brand-red hidden font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Account creation failed.</p>
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-red to-brand-darkRed text-white font-bold py-3.5 rounded-xl text-sm transition hover:opacity-90 shadow-lg">
+                    Register Account
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== STREAMING VIDEO PLAYER MODAL ==================== -->
+    <div id="videoPlayerModal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-md overflow-y-auto flex items-start justify-center p-2 sm:p-8">
+        <div class="glass-panel w-full max-w-5xl rounded-3xl border border-brand-red/40 p-4 sm:p-6 relative flex flex-col gap-4 shadow-2xl my-auto">
+            
+            <!-- Player Header -->
+            <div class="flex items-center justify-between border-b border-brand-border/80 pb-3">
+                <div class="flex items-center gap-3">
+                    <button onclick="closeVideoPlayer()" class="bg-brand-black hover:bg-brand-red/20 text-gray-300 hover:text-white px-3 py-2 rounded-xl border border-brand-border text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <div class="w-9 h-9 rounded-xl bg-brand-red/20 border border-brand-red/40 flex items-center justify-center text-brand-red">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <div>
+                        <h3 id="playerMovieTitle" class="text-lg font-black text-white uppercase tracking-wider">Movie Title</h3>
+                        <p id="playerMovieMeta" class="text-xs text-amber-400 font-bold">VJ Translator &bull; 2026</p>
+                    </div>
+                </div>
+                <button onclick="closeVideoPlayer()" class="text-gray-400 hover:text-white bg-brand-black p-2.5 rounded-full border border-brand-border transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- HTML5 Video Container -->
+            <div class="relative bg-black rounded-2xl overflow-hidden aspect-video border border-brand-border flex items-center justify-center group">
+                <video id="mainVideoPlayer" class="w-full h-full object-contain" controls crossorigin="anonymous">
+                    <source id="videoPlayerSource" src="" type="video/mp4">
+                    Your browser does not support HTML5 video playback.
+                </video>
+            </div>
+
+            <!-- Custom Player Tools Bar -->
+            <div class="glass-panel p-3.5 rounded-2xl border border-brand-border flex flex-wrap items-center justify-between gap-3 text-xs">
+                
+                <!-- Playback Speed Controls -->
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-400 font-bold uppercase text-[10px]"><i class="fa-solid fa-gauge-high text-brand-red mr-1"></i> Speed:</span>
+                    <div class="flex gap-1">
+                        <button onclick="setPlaybackSpeed(0.75)" class="bg-brand-black hover:bg-brand-red/20 border border-brand-border text-gray-300 px-2 py-1 rounded text-[11px] font-bold">0.75x</button>
+                        <button onclick="setPlaybackSpeed(1.0)" class="bg-brand-red text-white border border-brand-red px-2 py-1 rounded text-[11px] font-bold">1.0x</button>
+                        <button onclick="setPlaybackSpeed(1.25)" class="bg-brand-black hover:bg-brand-red/20 border border-brand-border text-gray-300 px-2 py-1 rounded text-[11px] font-bold">1.25x</button>
+                        <button onclick="setPlaybackSpeed(1.5)" class="bg-brand-black hover:bg-brand-red/20 border border-brand-border text-gray-300 px-2 py-1 rounded text-[11px] font-bold">1.5x</button>
+                        <button onclick="setPlaybackSpeed(2.0)" class="bg-brand-black hover:bg-brand-red/20 border border-brand-border text-gray-300 px-2 py-1 rounded text-[11px] font-bold">2.0x</button>
+                    </div>
+                </div>
+
+                <!-- Video Tools Buttons -->
+                <div class="flex items-center gap-2">
+                    <button onclick="togglePiP()" class="bg-brand-black hover:bg-brand-red/20 border border-brand-border text-gray-200 hover:text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-window-restore text-brand-red"></i> PiP
+                    </button>
+                    <button onclick="toggleFullScreen()" class="bg-brand-black hover:bg-brand-red/20 border border-brand-border text-gray-200 hover:text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-expand text-brand-red"></i> Fullscreen
+                    </button>
+                    <a id="playerDirectDlBtn" href="#" target="_blank" class="bg-brand-red hover:bg-brand-darkRed text-white px-3.5 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition shadow-lg">
+                        <i class="fa-solid fa-download"></i> Direct Download
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== DOWNLOAD MODAL ==================== -->
+    <div id="downloadModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-3xl border border-brand-border p-6 sm:p-8 relative space-y-6">
+            <button onclick="closeDownloadModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white bg-brand-black p-2.5 rounded-full border border-brand-border">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN PASSWORD AUTH MODAL ==================== -->
+    <div id="adminAuthModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md rounded-3xl border border-brand-red/40 p-8 space-y-6 relative shadow-2xl">
+            <button onclick="toggleAdminAuthModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white bg-brand-black p-2.5 rounded-full border border-brand-border">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-brand-red/20 text-brand-red border border-brand-red/40 rounded-2xl mx-auto flex items-center justify-center text-xl shadow-lg">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-2xl font-black text-white uppercase tracking-wider">Admin Portal Access</h3>
+                <p class="text-xs text-gray-400">Enter secure admin password to manage content & VJs.</p>
+            </div>
+            <form onsubmit="verifyAdminPassword(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="adminPasswordInput" required placeholder="Enter admin password..." class="w-full bg-brand-black border border-brand-border text-sm text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-brand-red" autocomplete="current-password">
+                    <p id="authErrorMsg" class="text-xs text-brand-red mt-1.5 hidden font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Incorrect password.</p>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-red to-brand-darkRed text-white font-bold py-3.5 rounded-xl text-sm transition hover:opacity-90 shadow-lg">
+                    Authenticate Admin
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN PANEL MODAL ==================== -->
+    <div id="adminPanelModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-lg flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div class="glass-panel w-full max-w-5xl max-h-[92vh] rounded-3xl border border-brand-red/40 p-6 sm:p-8 flex flex-col relative shadow-2xl overflow-hidden my-auto">
+            
+            <!-- Admin Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-brand-border gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-red/20 border border-brand-red/40 flex items-center justify-center text-brand-red">
+                        <i class="fa-solid fa-gears"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-white uppercase">MALCOMFLIX Admin Control</h2>
+                        <p class="text-xs text-gray-400">Add movies, configure VJ translators, and manage user accounts.</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminPanel()" class="text-gray-400 hover:text-white bg-brand-black p-2.5 rounded-full border border-brand-border">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Admin Scrollable Body -->
+            <div class="flex-1 overflow-y-auto py-6 space-y-8 pr-2">
+                
+                <!-- Quick Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-brand-black p-4 rounded-2xl border border-brand-border">
+                        <span class="text-xs text-gray-400 block font-bold">Total Movies</span>
+                        <span id="statTotalMovies" class="text-2xl font-black text-white mt-1 block">0</span>
+                    </div>
+                    <div class="bg-brand-black p-4 rounded-2xl border border-brand-border">
+                        <span class="text-xs text-gray-400 block font-bold">Registered Users</span>
+                        <span id="statTotalUsers" class="text-2xl font-black text-emerald-400 mt-1 block">0</span>
+                    </div>
+                    <div class="bg-brand-black p-4 rounded-2xl border border-brand-border">
+                        <span class="text-xs text-gray-400 block font-bold">Active VJs</span>
+                        <span id="statTotalVJs" class="text-2xl font-black text-brand-red mt-1 block">0</span>
+                    </div>
+                    <div class="bg-brand-black p-4 rounded-2xl border border-brand-border">
+                        <span class="text-xs text-gray-400 block font-bold">Download Clicks</span>
+                        <span id="statTotalDownloads" class="text-2xl font-black text-amber-400 mt-1 block">0</span>
+                    </div>
+                </div>
+
+                <!-- User Accounts Manager -->
+                <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
+                    <h3 class="font-bold text-white text-base"><i class="fa-solid fa-users text-emerald-400 mr-2"></i> Registered User Accounts</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-300">
+                            <thead class="bg-brand-black text-gray-400 uppercase font-mono">
+                                <tr>
+                                    <th class="p-3">Username</th>
+                                    <th class="p-3">Email</th>
+                                    <th class="p-3">Joined Date</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersTable" class="divide-y divide-brand-border"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Gemini API Key Configuration Section -->
+                <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
+                    <h3 class="font-bold text-white text-base"><i class="fa-solid fa-key text-brand-red mr-2"></i> Gemini API Key Configuration</h3>
+                    <p class="text-xs text-gray-400">Enter your Gemini API key so the AI Assistant, Auto-Plot, and AI Poster generators work smoothly when exported.</p>
+                    <div class="flex gap-2">
+                        <input type="password" id="adminApiKeyInput" placeholder="Paste your Gemini API key (AIzaSy...)" class="flex-1 bg-brand-black border border-brand-border text-xs text-white px-4 py-2.5 rounded-xl focus:outline-none focus:border-brand-red">
+                        <button onclick="saveApiKey()" class="bg-brand-red hover:bg-brand-darkRed text-white text-xs font-bold px-4 py-2.5 rounded-xl transition whitespace-nowrap">
+                            Save Key
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VJ Translator Management Section -->
+                <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
+                    <h3 class="font-bold text-white text-base"><i class="fa-solid fa-users-gear text-brand-red mr-2"></i> Manage VJ Translators</h3>
+                    <p class="text-xs text-gray-400">Add or remove VJ voices. New VJs instantly appear in filter buttons and movie upload options.</p>
+                    <div class="flex flex-wrap gap-2" id="vjChipsList"></div>
+                    <div class="flex gap-2 pt-2">
+                        <input type="text" id="newVJInput" placeholder="e.g. VJ Quick..." class="bg-brand-black border border-brand-border text-xs text-white px-4 py-2.5 rounded-xl focus:outline-none focus:border-brand-red">
+                        <button onclick="addNewVJ()" class="bg-brand-red hover:bg-brand-darkRed text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Add VJ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Background Image Customizer -->
+                <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
+                    <h3 class="font-bold text-white text-base"><i class="fa-solid fa-image text-brand-red mr-2"></i> Hero Background Image</h3>
+                    <p class="text-xs text-gray-400">Paste any direct image URL to update the landing page background instantly.</p>
+                    <div class="flex gap-2">
+                        <input type="url" id="bgImageUrlInput" placeholder="https://images.unsplash.com/..." class="flex-1 bg-brand-black border border-brand-border text-xs text-white px-4 py-2.5 rounded-xl focus:outline-none focus:border-brand-red">
+                        <button onclick="updateHeroBackground()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                            Update Background
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Add / Edit Movie Form -->
+                <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-white text-base"><i class="fa-solid fa-film text-brand-red mr-2"></i> Add / Edit Movie Entry</h3>
+                        <button type="button" onclick="resetMovieForm()" class="text-xs text-gray-400 hover:text-white underline">Clear Form</button>
+                    </div>
+                    
+                    <form onsubmit="saveMovieEntry(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="hidden" id="editMovieId">
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Movie Title *</label>
+                            <input type="text" id="inputMovieTitle" required placeholder="e.g. Matrix Reloaded" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Poster Image URL or Drop Image *</label>
+                            <div class="flex gap-2 mb-2">
+                                <input type="url" id="inputPosterUrl" required placeholder="https://images.unsplash.com/..." class="flex-1 bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
+                                <button type="button" onclick="generateAiPoster()" class="bg-gradient-to-r from-brand-red to-amber-600 hover:opacity-90 text-white text-xs font-bold px-3.5 py-3 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap shadow-md">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Poster
+                                </button>
+                            </div>
+                            <!-- Image Drop Zone -->
+                            <div id="posterDropZone" class="border-2 border-dashed border-brand-border hover:border-brand-red rounded-xl p-3 text-center cursor-pointer bg-brand-black/40 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-brand-red text-sm"></i>
+                                <span class="text-xs text-gray-300 font-bold">Drag & drop poster image here, or click to browse</span>
+                                <input type="file" id="posterFileInput" accept="image/*" class="hidden" onchange="handlePosterFileSelect(event)">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">VJ Translator *</label>
+                            <select id="inputVJSelect" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Category / Genre *</label>
+                            <select id="inputCategorySelect" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
+                                <option value="Action">Action</option>
+                                <option value="Drama">Drama</option>
+                                <option value="Sci-Fi">Sci-Fi</option>
+                                <option value="Thriller">Thriller</option>
+                                <option value="Comedy">Comedy</option>
+                                <option value="Animation">Animation</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Release Year *</label>
+                            <input type="text" id="inputMovieYear" required placeholder="2026" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Rating (out of 5)</label>
+                            <input type="text" id="inputMovieRating" placeholder="4.8" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Direct Storage Download Link *</label>
+                            <input type="url" id="inputStorageLink" required placeholder="https://storage.malcomflix.net/d/movie_file.mp4" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Movie Bio / Plot Synopsis *</label>
+                            <div class="flex gap-2 mb-2">
+                                <textarea id="inputMovieBio" rows="3" required placeholder="Write plot description here..." class="flex-1 bg-brand-black border border-brand-border text-sm text-white p-3 rounded-xl focus:border-brand-red resize-none"></textarea>
+                            </div>
+                            <button type="button" onclick="generateAiSynopsis()" class="bg-gradient-to-r from-purple-900 to-brand-card hover:from-purple-700 text-purple-200 text-xs font-bold px-4 py-2 rounded-xl border border-purple-500/40 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Auto-Generate Plot with Gemini AI
+                            </button>
+                        </div>
+
+                        <div class="md:col-span-2 flex items-center justify-end gap-3 pt-2">
+                            <button type="submit" class="bg-brand-red hover:bg-brand-darkRed text-white font-bold text-xs px-6 py-3 rounded-xl transition shadow-lg">
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i> Save Movie Entry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Movies Table -->
+                <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
+                    <h3 class="font-bold text-white text-base"><i class="fa-solid fa-list text-brand-red mr-2"></i> Manage Existing Vault Movies</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-300">
+                            <thead class="bg-brand-black text-gray-400 uppercase font-mono">
+                                <tr>
+                                    <th class="p-3">Poster</th>
+                                    <th class="p-3">Title</th>
+                                    <th class="p-3">VJ</th>
+                                    <th class="p-3">Year</th>
+                                    <th class="p-3">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminMoviesTable" class="divide-y divide-brand-border"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        const DEFAULT_MOVIES = [
+            {
+                id: 'm1',
+                title: "Cyberpunk 2088",
+                category: "Action",
+                vj: "VJ Junior",
+                rating: "4.9",
+                year: "2025",
+                poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
+                synopsis: "In a neon-drenched metropolis, a rogue hacker unravels a corporate conspiracy that threatens human consciousness.",
+                storageLink: "https://storage.malcomflix.net/d/cyberpunk_2088_4k.mp4?token=exp_active"
+            },
+            {
+                id: 'm2',
+                title: "The Last Warrior",
+                category: "Action",
+                vj: "VJ Jingo",
+                rating: "4.8",
+                year: "2024",
+                poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
+                synopsis: "Full English & Swahili audio translated blockbuster action. Follow the ancient warrior's quest to save his clan.",
+                storageLink: "https://storage.malcomflix.net/d/last_warrior_vj.mkv?token=exp_active"
+            },
+            {
+                id: 'm3',
+                title: "Shadow Realm",
+                category: "Drama",
+                vj: "VJ Ice P",
+                rating: "4.7",
+                year: "2025",
+                poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
+                synopsis: "A psychological thriller exploring parallel dimensions and forgotten memories.",
+                storageLink: "https://storage.malcomflix.net/d/shadow_realm_1080p.mp4?token=exp_active"
+            },
+            {
+                id: 'm4',
+                title: "Extraction Protocol",
+                category: "Action",
+                vj: "VJ Emmie",
+                rating: "4.9",
+                year: "2026",
+                poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
+                synopsis: "High-octane mercenary rescue mission with hilarious commentary and real-time translation.",
+                storageLink: "https://storage.malcomflix.net/d/extraction_vj_emmie.mkv?token=exp_active"
+            }
+        ];
+
+        const DEFAULT_VJS = ["Original / English", "VJ Junior", "VJ Jingo", "VJ Ice P", "VJ Emmie", "VJ Mark"];
+        const DEFAULT_CATEGORIES = ["All Types", "Action", "Drama", "Sci-Fi", "Thriller", "Comedy", "Animation"];
+        const DEFAULT_BG = "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1600&auto=format&fit=crop&q=80";
+        const DEFAULT_USERS = [
+            { username: "malcom_fan", email: "fan@malcomflix.com", password: "123", joined: "2026-02-10", watchlist: ['m1', 'm4'] },
+            { username: "vj_lover", email: "vj@cinema.ug", password: "123", joined: "2026-03-01", watchlist: ['m2'] }
+        ];
+
+        // APPLICATION STATE
+        let appState = {
+            movies: JSON.parse(localStorage.getItem('malcom_movies')) || DEFAULT_MOVIES,
+            vjs: JSON.parse(localStorage.getItem('malcom_vjs')) || DEFAULT_VJS,
+            categories: DEFAULT_CATEGORIES,
+            bgUrl: localStorage.getItem('malcom_bg') || DEFAULT_BG,
+            downloadClicks: parseInt(localStorage.getItem('malcom_dl_clicks') || '142'),
+            geminiApiKey: localStorage.getItem('malcom_gemini_key') || '',
+            users: JSON.parse(localStorage.getItem('malcom_registered_users')) || DEFAULT_USERS,
+            currentUser: JSON.parse(localStorage.getItem('malcom_current_user')) || null,
+            activeVjFilter: 'all',
+            activeCategoryFilter: 'all',
+            showingWatchlistOnly: false
+        };
+
+        // GEMINI API INTEGRATION
+        async function callGeminiAPI(systemPrompt, userQuery) {
+            const apiKey = appState.geminiApiKey || localStorage.getItem('malcom_gemini_key') || "";
+            if (!apiKey) {
+                throw new Error("Gemini API key is not configured. Please enter your API key in the Admin Panel.");
+            }
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            let retries = 3;
+            let delay = 1000;
+            while (retries > 0) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    return data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received from AI.";
+                } catch (err) {
+                    retries--;
+                    if (retries === 0) throw err;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // INITIALIZE APP
+        window.onload = function() {
+            applyBackground();
+            renderFilterButtons();
+            renderMovies();
+            populateVJSelects();
+            updateUserUI();
+            setupPosterDropZone();
+            const apiKeyInput = document.getElementById('adminApiKeyInput');
+            if (apiKeyInput && appState.geminiApiKey) {
+                apiKeyInput.value = appState.geminiApiKey;
+            }
+        };
+
+        function saveState() {
+            localStorage.setItem('malcom_movies', JSON.stringify(appState.movies));
+            localStorage.setItem('malcom_vjs', JSON.stringify(appState.vjs));
+            localStorage.setItem('malcom_bg', appState.bgUrl);
+            localStorage.setItem('malcom_dl_clicks', appState.downloadClicks.toString());
+            localStorage.setItem('malcom_gemini_key', appState.geminiApiKey);
+            localStorage.setItem('malcom_registered_users', JSON.stringify(appState.users));
+            localStorage.setItem('malcom_current_user', JSON.stringify(appState.currentUser));
+        }
+
+        function saveApiKey() {
+            const input = document.getElementById('adminApiKeyInput');
+            if (!input) return;
+            appState.geminiApiKey = input.value.trim();
+            saveState();
+            alert("Gemini API key saved successfully!");
+        }
+
+        function applyBackground() {
+            const landing = document.getElementById('landingScreen');
+            if (landing) landing.style.backgroundImage = `url('${appState.bgUrl}')`;
+        }
+
+        function enterMainSite() {
+            const landing = document.getElementById('landingScreen');
+            const dash = document.getElementById('mainDashboard');
+            if (landing) landing.classList.add('opacity-0');
+            setTimeout(() => {
+                if (landing) landing.classList.add('hidden');
+                if (dash) {
+                    dash.classList.remove('hidden');
+                    dash.classList.add('flex');
+                }
+                renderFilterButtons();
+                renderMovies();
+            }, 400);
+        }
+
+        function returnToLanding() {
+            const landing = document.getElementById('landingScreen');
+            const dash = document.getElementById('mainDashboard');
+            if (dash) {
+                dash.classList.add('hidden');
+                dash.classList.remove('flex');
+            }
+            if (landing) {
+                landing.classList.remove('hidden');
+                landing.classList.remove('opacity-0');
+            }
+        }
+
+        // ================= USER AUTHENTICATION & MANAGEMENT =================
+        function toggleUserAuthModal() {
+            const modal = document.getElementById('userAuthModal');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
+        function switchAuthTab(tab) {
+            const signInForm = document.getElementById('userSignInForm');
+            const signUpForm = document.getElementById('userSignUpForm');
+            const tabSignInBtn = document.getElementById('tabSignInBtn');
+            const tabSignUpBtn = document.getElementById('tabSignUpBtn');
+
+            if (tab === 'signin') {
+                signInForm.classList.remove('hidden');
+                signUpForm.classList.add('hidden');
+                tabSignInBtn.className = "text-base font-black text-white border-b-2 border-brand-red pb-1";
+                tabSignUpBtn.className = "text-base font-black text-gray-400 border-b-2 border-transparent pb-1 hover:text-white";
+            } else {
+                signInForm.classList.add('hidden');
+                signUpForm.classList.remove('hidden');
+                tabSignUpBtn.className = "text-base font-black text-white border-b-2 border-brand-red pb-1";
+                tabSignInBtn.className = "text-base font-black text-gray-400 border-b-2 border-transparent pb-1 hover:text-white";
+            }
+        }
+
+        function handleUserSignIn(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('signInIdentifier').value.trim().toLowerCase();
+            const password = document.getElementById('signInPassword').value;
+            const errorMsg = document.getElementById('userAuthErrorMsg');
+
+            const foundUser = appState.users.find(u => (u.username.toLowerCase() === identifier || u.email.toLowerCase() === identifier) && u.password === password);
+
+            if (foundUser) {
+                appState.currentUser = foundUser;
+                if (!appState.currentUser.watchlist) appState.currentUser.watchlist = [];
+                saveState();
+                updateUserUI();
+                toggleUserAuthModal();
+                if (errorMsg) errorMsg.classList.add('hidden');
+                alert(`Welcome back, ${foundUser.username}!`);
+            } else {
+                if (errorMsg) errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function handleUserSignUp(e) {
+            e.preventDefault();
+            const username = document.getElementById('signUpUsername').value.trim();
+            const email = document.getElementById('signUpEmail').value.trim();
+            const password = document.getElementById('signUpPassword').value;
+            const errorMsg = document.getElementById('userSignUpErrorMsg');
+
+            if (appState.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                if (errorMsg) {
+                    errorMsg.innerText = "Username already taken.";
+                    errorMsg.classList.remove('hidden');
+                }
+                return;
+            }
+
+            const newUser = {
+                username: username,
+                email: email,
+                password: password,
+                joined: new Date().toISOString().split('T')[0],
+                watchlist: []
+            };
+
+            appState.users.push(newUser);
+            appState.currentUser = newUser;
+            saveState();
+            updateUserUI();
+            toggleUserAuthModal();
+            if (errorMsg) errorMsg.classList.add('hidden');
+            alert(`Account created successfully! Welcome to MALCOMFLIX, ${username}!`);
+        }
+
+        function logoutUser() {
+            appState.currentUser = null;
+            appState.showingWatchlistOnly = false;
+            saveState();
+            updateUserUI();
+            renderMovies();
+        }
+
+        function removeUserAccount(username) {
+            if (appState.currentUser && appState.currentUser.username === username) {
+                alert("You cannot remove your currently signed-in account.");
+                return;
+            }
+            if (!confirm(`Are you sure you want to remove user account "${username}"?`)) return;
+            
+            appState.users = appState.users.filter(u => u.username !== username);
+            saveState();
+            updateUserUI();
+            renderAdminUsersTable();
+            updateAdminStats();
+            alert(`User account "${username}" has been removed successfully.`);
+        }
+
+        function updateUserUI() {
+            const userNavLabel = document.getElementById('userNavLabel');
+            const welcomeBanner = document.getElementById('userWelcomeBanner');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const userAvatarText = document.getElementById('userAvatarText');
+            const watchlistCount = document.getElementById('watchlistCount');
+
+            if (appState.currentUser) {
+                if (userNavLabel) userNavLabel.innerText = appState.currentUser.username;
+                if (welcomeBanner) welcomeBanner.classList.remove('hidden');
+                if (userNameDisplay) userNameDisplay.innerText = appState.currentUser.username;
+                if (userAvatarText) userAvatarText.innerText = appState.currentUser.username.charAt(0).toUpperCase();
+                if (watchlistCount) watchlistCount.innerText = (appState.currentUser.watchlist || []).length;
+            } else {
+                if (userNavLabel) userNavLabel.innerText = "Sign In";
+                if (welcomeBanner) welcomeBanner.classList.add('hidden');
+            }
+            renderAdminUsersTable();
+        }
+
+        function toggleWatchlistMovie(movieId) {
+            if (!appState.currentUser) {
+                toggleUserAuthModal();
+                alert("Please sign in or create an account to save movies to your watchlist!");
+                return;
+            }
+
+            if (!appState.currentUser.watchlist) appState.currentUser.watchlist = [];
+            const idx = appState.currentUser.watchlist.indexOf(movieId);
+
+            if (idx >= 0) {
+                appState.currentUser.watchlist.splice(idx, 1);
+            } else {
+                appState.currentUser.watchlist.push(movieId);
+            }
+
+            const uIdx = appState.users.findIndex(u => u.username === appState.currentUser.username);
+            if (uIdx >= 0) appState.users[uIdx] = appState.currentUser;
+
+            saveState();
+            updateUserUI();
+            renderMovies();
+        }
+
+        function toggleWatchlistView() {
+            appState.showingWatchlistOnly = !appState.showingWatchlistOnly;
+            const btn = document.getElementById('watchlistToggleBtn');
+            if (btn) {
+                if (appState.showingWatchlistOnly) {
+                    btn.className = "bg-brand-red text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg";
+                } else {
+                    btn.className = "bg-brand-black border border-brand-border hover:border-brand-red text-xs font-bold px-3 py-2 rounded-xl text-gray-300 hover:text-white transition flex items-center gap-1.5";
+                }
+            }
+            filterMovies();
+        }
+
+        function renderAdminUsersTable() {
+            const tbody = document.getElementById('adminUsersTable');
+            const totalUsersStat = document.getElementById('statTotalUsers');
+            if (totalUsersStat) totalUsersStat.innerText = appState.users.length;
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            appState.users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-black/50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-white">${u.username}</td>
+                    <td class="p-3 text-gray-400">${u.email}</td>
+                    <td class="p-3 font-mono">${u.joined || '2026-03-15'}</td>
+                    <td class="p-3"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold">Active Member</span></td>
+                    <td class="p-3">
+                        <button onclick="removeUserAccount('${u.username}')" class="bg-red-600/20 text-brand-red hover:bg-red-600 hover:text-white px-2.5 py-1 rounded-lg text-xs transition flex items-center gap-1">
+                            <i class="fa-solid fa-trash"></i> Remove
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ================= POPULATE VJ SELECTS & ADMIN HELPERS =================
+        function populateVJSelects() {
+            const select = document.getElementById('inputVJSelect');
+            if (select) {
+                select.innerHTML = '';
+                appState.vjs.forEach(vj => {
+                    const opt = document.createElement('option');
+                    opt.value = vj;
+                    opt.innerText = vj;
+                    select.appendChild(opt);
+                });
+            }
+            renderVJChips();
+            renderAdminMoviesTable();
+            updateAdminStats();
+        }
+
+        function renderVJChips() {
+            const chipsList = document.getElementById('vjChipsList');
+            if (!chipsList) return;
+            chipsList.innerHTML = '';
+            appState.vjs.forEach((vj) => {
+                const chip = document.createElement('div');
+                chip.className = "flex items-center gap-2 bg-brand-black border border-brand-border text-xs text-white px-3 py-1.5 rounded-xl";
+                chip.innerHTML = `
+                    <span>${vj}</span>
+                    ${appState.vjs.length > 1 ? `<button onclick="removeVJ('${vj}')" class="text-gray-400 hover:text-brand-red ml-1"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                `;
+                chipsList.appendChild(chip);
+            });
+        }
+
+        function addNewVJ() {
+            const input = document.getElementById('newVJInput');
+            if (!input) return;
+            const newVJ = input.value.trim();
+            if (!newVJ) return;
+            if (appState.vjs.includes(newVJ)) {
+                alert("This VJ already exists!");
+                return;
+            }
+            appState.vjs.push(newVJ);
+            input.value = '';
+            saveState();
+            populateVJSelects();
+            renderFilterButtons();
+        }
+
+        function removeVJ(vjName) {
+            if (appState.vjs.length <= 1) {
+                alert("You must keep at least one VJ translator.");
+                return;
+            }
+            appState.vjs = appState.vjs.filter(v => v !== vjName);
+            saveState();
+            populateVJSelects();
+            renderFilterButtons();
+        }
+
+        function updateAdminStats() {
+            const statMovies = document.getElementById('statTotalMovies');
+            const statVjs = document.getElementById('statTotalVJs');
+            const statDl = document.getElementById('statTotalDownloads');
+            const statUsers = document.getElementById('statTotalUsers');
+
+            if (statMovies) statMovies.innerText = appState.movies.length;
+            if (statVjs) statVjs.innerText = appState.vjs.length;
+            if (statDl) statDl.innerText = appState.downloadClicks;
+            if (statUsers) statUsers.innerText = appState.users.length;
+        }
+
+        function updateHeroBackground() {
+            const input = document.getElementById('bgImageUrlInput');
+            if (!input || !input.value.trim()) return;
+            appState.bgUrl = input.value.trim();
+            saveState();
+            applyBackground();
+            input.value = '';
+            alert("Hero background image updated successfully!");
+        }
+
+        // ================= ADMIN AUTH & PANEL MODALS =================
+        function toggleAdminAuthModal() {
+            const modal = document.getElementById('adminAuthModal');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
+        function verifyAdminPassword(event) {
+            event.preventDefault();
+            const input = document.getElementById('adminPasswordInput');
+            const errorMsg = document.getElementById('authErrorMsg');
+            if (!input) return;
+
+            if (input.value.trim() === 'sherinah') {
+                if (errorMsg) errorMsg.classList.add('hidden');
+                input.value = '';
+                toggleAdminAuthModal();
+                openAdminPanel();
+            } else {
+                if (errorMsg) errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function openAdminPanel() {
+            const panel = document.getElementById('adminPanelModal');
+            if (panel) panel.classList.remove('hidden');
+            populateVJSelects();
+            renderAdminUsersTable();
+            const apiKeyInput = document.getElementById('adminApiKeyInput');
+            if (apiKeyInput && appState.geminiApiKey) {
+                apiKeyInput.value = appState.geminiApiKey;
+            }
+        }
+
+        function closeAdminPanel() {
+            const panel = document.getElementById('adminPanelModal');
+            if (panel) panel.classList.add('hidden');
+        }
+
+        // ================= MOVIE CRUD IN ADMIN & DRAG-AND-DROP POSTER =================
+        function setupPosterDropZone() {
+            const dropZone = document.getElementById('posterDropZone');
+            const fileInput = document.getElementById('posterFileInput');
+            if (!dropZone || !fileInput) return;
+
+            dropZone.onclick = () => fileInput.click();
+
+            dropZone.ondragover = (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-brand-red', 'bg-brand-red/10');
+            };
+
+            dropZone.ondragleave = (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-brand-red', 'bg-brand-red/10');
+            };
+
+            dropZone.ondrop = (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-brand-red', 'bg-brand-red/10');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    processPosterFile(e.dataTransfer.files[0]);
+                }
+            };
+        }
+
+        function handlePosterFileSelect(e) {
+            if (e.target.files && e.target.files[0]) {
+                processPosterFile(e.target.files[0]);
+            }
+        }
+
+        function processPosterFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert("Please drop a valid image file.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const posterInput = document.getElementById('inputPosterUrl');
+                if (posterInput) {
+                    posterInput.value = evt.target.result;
+                }
+                alert("Poster image successfully loaded from file!");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveMovieEntry(event) {
+            event.preventDefault();
+            const idInput = document.getElementById('editMovieId');
+            const titleInput = document.getElementById('inputMovieTitle');
+            const posterInput = document.getElementById('inputPosterUrl');
+            const vjSelect = document.getElementById('inputVJSelect');
+            const catSelect = document.getElementById('inputCategorySelect');
+            const yearInput = document.getElementById('inputMovieYear');
+            const ratingInput = document.getElementById('inputMovieRating');
+            const storageInput = document.getElementById('inputStorageLink');
+            const bioInput = document.getElementById('inputMovieBio');
+
+            if (!titleInput || !posterInput || !storageInput) return;
+
+            const movieId = idInput && idInput.value ? idInput.value : 'm_' + Date.now();
+            const movieData = {
+                id: movieId,
+                title: titleInput.value.trim(),
+                poster: posterInput.value.trim(),
+                vj: vjSelect ? vjSelect.value : 'Original',
+                category: catSelect ? catSelect.value : 'Action',
+                year: yearInput ? yearInput.value.trim() : '2026',
+                rating: ratingInput && ratingInput.value.trim() ? ratingInput.value.trim() : '4.8',
+                storageLink: storageInput.value.trim(),
+                synopsis: bioInput ? bioInput.value.trim() : ''
+            };
+
+            const existingIndex = appState.movies.findIndex(m => m.id === movieId);
+            if (existingIndex >= 0) {
+                appState.movies[existingIndex] = movieData;
+            } else {
+                appState.movies.unshift(movieData);
+            }
+
+            saveState();
+            resetMovieForm();
+            renderMovies();
+            renderAdminMoviesTable();
+            updateAdminStats();
+            alert("Movie saved successfully to vault!");
+        }
+
+        function resetMovieForm() {
+            const idInput = document.getElementById('editMovieId');
+            const titleInput = document.getElementById('inputMovieTitle');
+            const posterInput = document.getElementById('inputPosterUrl');
+            const yearInput = document.getElementById('inputMovieYear');
+            const ratingInput = document.getElementById('inputMovieRating');
+            const storageInput = document.getElementById('inputStorageLink');
+            const bioInput = document.getElementById('inputMovieBio');
+
+            if (idInput) idInput.value = '';
+            if (titleInput) titleInput.value = '';
+            if (posterInput) posterInput.value = '';
+            if (yearInput) yearInput.value = '';
+            if (ratingInput) ratingInput.value = '';
+            if (storageInput) storageInput.value = '';
+            if (bioInput) bioInput.value = '';
+        }
+
+        function editMovie(movieId) {
+            const movie = appState.movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            document.getElementById('editMovieId').value = movie.id;
+            document.getElementById('inputMovieTitle').value = movie.title;
+            document.getElementById('inputPosterUrl').value = movie.poster;
+            document.getElementById('inputVJSelect').value = movie.vj;
+            document.getElementById('inputCategorySelect').value = movie.category;
+            document.getElementById('inputMovieYear').value = movie.year;
+            document.getElementById('inputMovieRating').value = movie.rating;
+            document.getElementById('inputStorageLink').value = movie.storageLink;
+            document.getElementById('inputMovieBio').value = movie.synopsis;
+
+            const formTitle = document.querySelector('#adminPanelModal form');
+            if (formTitle) formTitle.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteMovie(movieId) {
+            if (!confirm("Are you sure you want to delete this movie from the vault?")) return;
+            appState.movies = appState.movies.filter(m => m.id !== movieId);
+            saveState();
+            renderMovies();
+            renderAdminMoviesTable();
+            updateAdminStats();
+        }
+
+        function renderAdminMoviesTable() {
+            const tbody = document.getElementById('adminMoviesTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            appState.movies.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-black/50 transition";
+                tr.innerHTML = `
+                    <td class="p-3"><img src="${m.poster}" class="w-10 h-10 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=200'"></td>
+                    <td class="p-3 font-bold text-white">${m.title}</td>
+                    <td class="p-3"><span class="bg-brand-red/20 text-brand-red px-2 py-0.5 rounded text-[10px] font-bold">${m.vj}</span></td>
+                    <td class="p-3">${m.year}</td>
+                    <td class="p-3 flex items-center gap-2">
+                        <button onclick="editMovie('${m.id}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white p-2 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteMovie('${m.id}')" class="bg-red-600/20 text-brand-red hover:bg-red-600 hover:text-white p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ================= AI ASSISTANT & REALISTIC AI POSTER =================
+        function toggleAiChat() {
+            const chatContainer = document.getElementById('aiChatContainer');
+            if (chatContainer) chatContainer.classList.toggle('hidden');
+        }
+
+        async function askGeminiAssistant() {
+            const input = document.getElementById('aiUserPrompt');
+            if (!input) return;
+            const prompt = input.value.trim();
+            if (!prompt) return;
+
+            const chatHistory = document.getElementById('aiChatHistory');
+            if (chatHistory) {
+                chatHistory.innerHTML += `
+                    <div class="bg-brand-red/10 p-3 rounded-xl border border-brand-red/30 text-white text-right">
+                        <strong class="text-brand-red">You:</strong> ${prompt}
+                    </div>
+                `;
+            }
+            input.value = '';
+            if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            const loadingId = 'loading_' + Date.now();
+            if (chatHistory) {
+                chatHistory.innerHTML += `
+                    <div id="${loadingId}" class="bg-brand-black/60 p-3 rounded-xl border border-brand-border text-gray-400">
+                        🤖 <strong class="text-white">Gemini:</strong> Thinking...
+                    </div>
+                `;
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+
+            const catalogSummary = appState.movies.map(m => `${m.title} (${m.category}, VJ: ${m.vj}, Year: ${m.year})`).join("; ");
+            const systemPrompt = `You are MALCOMFLIX AI, an energetic cinema assistant for a movie streaming platform featuring VJ translated movies. The available movies on our site are: ${catalogSummary}. Provide helpful, friendly movie suggestions or advice based on user queries in 2-3 short sentences.`;
+
+            try {
+                const response = await callGeminiAPI(systemPrompt, prompt);
+                const el = document.getElementById(loadingId);
+                if (el) el.innerHTML = `🤖 <strong class="text-white">Gemini:</strong> ${response}`;
+            } catch (err) {
+                const el = document.getElementById(loadingId);
+                if (el) el.innerHTML = `🤖 <strong class="text-brand-red">Error:</strong> ${err.message}`;
+            }
+            if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        async function generateAiSynopsis() {
+            const titleInput = document.getElementById('inputMovieTitle');
+            const vjSelect = document.getElementById('inputVJSelect');
+            const categorySelect = document.getElementById('inputCategorySelect');
+            
+            if (!titleInput || !titleInput.value.trim()) {
+                alert("Please enter a Movie Title first before generating a synopsis!");
+                return;
+            }
+
+            const title = titleInput.value.trim();
+            const vj = vjSelect ? vjSelect.value : 'Original';
+            const category = categorySelect ? categorySelect.value : 'Action';
+
+            const bioInput = document.getElementById('inputMovieBio');
+            if (bioInput) bioInput.value = "Generating AI synopsis with Gemini...";
+
+            const systemPrompt = "You are an expert movie copywriter for an action-packed, translated cinema portal. Generate an exciting, thrilling 2-sentence synopsis for a movie given its title, genre, and VJ translator.";
+            const userPrompt = `Generate a short thrilling synopsis for movie title '${title}' of genre '${category}' translated by '${vj}'.`;
+
+            try {
+                const result = await callGeminiAPI(systemPrompt, userPrompt);
+                if (bioInput) bioInput.value = result.trim();
+            } catch (err) {
+                if (bioInput) bioInput.value = "";
+                alert(err.message || "Failed to generate plot via AI. Please check your Gemini API Key in the Admin Panel.");
+            }
+        }
+
+        async function generateAiPoster() {
+            const titleInput = document.getElementById('inputMovieTitle');
+            const categorySelect = document.getElementById('inputCategorySelect');
+            const posterInput = document.getElementById('inputPosterUrl');
+
+            if (!titleInput || !titleInput.value.trim()) {
+                alert("Please enter a Movie Title first so AI can generate a realistic cover according to the title!");
+                return;
+            }
+
+            const title = titleInput.value.trim();
+            const category = categorySelect ? categorySelect.value : 'Action';
+            
+            if (posterInput) posterInput.value = "Generating realistic cover with Gemini AI...";
+
+            try {
+                const systemPrompt = "You are an expert art director. Given a movie title and genre, return ONLY 3 to 4 comma-separated cinematic photo keywords (e.g. 'cyberpunk street, futuristic warrior, neon lighting') that capture the exact mood of the title.";
+                const userPrompt = `Movie Title: ${title}, Genre: ${category}`;
+                const keywords = await callGeminiAPI(systemPrompt, userPrompt);
+                
+                const cleanKeywords = keywords.replace(/["']/g, "").trim();
+                const realisticCoverUrl = `https://images.unsplash.com/featured/?${encodeURIComponent(cleanKeywords)}`;
+                
+                if (posterInput) posterInput.value = realisticCoverUrl;
+                alert(`Realistic AI cover generated for "${title}"!`);
+            } catch (err) {
+                // Fallback realistic query
+                const fallbackUrl = `https://images.unsplash.com/featured/?${encodeURIComponent(title + ' ' + category + ' cinematic poster')}`;
+                if (posterInput) posterInput.value = fallbackUrl;
+                alert(`Realistic cover generated via fallback for "${title}". (Tip: Add your Gemini API key in Admin panel for advanced AI cover creation).`);
+            }
+        }
+
+        // ================= FILTER & MOVIE DISPLAY =================
+        function renderFilterButtons() {
+            const vjContainer = document.getElementById('vjFilterContainer');
+            const catContainer = document.getElementById('categoryFilterContainer');
+
+            if (vjContainer) {
+                vjContainer.innerHTML = `
+                    <button onclick="setVjFilter('all')" class="filter-btn ${appState.activeVjFilter === 'all' ? 'bg-brand-red text-white' : 'bg-brand-black text-gray-400 border border-brand-border'} px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap">All VJs</button>
+                `;
+
+                appState.vjs.forEach(vj => {
+                    const isSelected = appState.activeVjFilter === vj;
+                    const btn = document.createElement('button');
+                    btn.className = `filter-btn ${isSelected ? 'bg-brand-red text-white' : 'bg-brand-black text-gray-400 border border-brand-border'} px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap hover:text-white`;
+                    btn.innerText = vj;
+                    btn.onclick = () => setVjFilter(vj);
+                    vjContainer.appendChild(btn);
+                });
+            }
+
+            if (catContainer) {
+                catContainer.innerHTML = '';
+                appState.categories.forEach(cat => {
+                    const catVal = cat === "All Types" ? "all" : cat;
+                    const isSelected = appState.activeCategoryFilter === catVal;
+                    const btn = document.createElement('button');
+                    btn.className = `filter-btn ${isSelected ? 'bg-amber-500 text-black font-black' : 'bg-brand-black text-gray-400 border border-brand-border'} px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap hover:text-white`;
+                    btn.innerText = cat;
+                    btn.onclick = () => setCategoryFilter(catVal);
+                    catContainer.appendChild(btn);
+                });
+            }
+        }
+
+        function setVjFilter(vj) {
+            appState.activeVjFilter = vj;
+            renderFilterButtons();
+            filterMovies();
+        }
+
+        function setCategoryFilter(category) {
+            appState.activeCategoryFilter = category;
+            renderFilterButtons();
+            filterMovies();
+        }
+
+        function filterMovies() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput ? searchInput.value.toLowerCase() : '';
+            let filtered = appState.movies;
+
+            if (appState.showingWatchlistOnly && appState.currentUser) {
+                const userWatchlist = appState.currentUser.watchlist || [];
+                filtered = filtered.filter(m => userWatchlist.includes(m.id));
+            }
+
+            if (appState.activeVjFilter !== 'all') {
+                filtered = filtered.filter(m => m.vj === appState.activeVjFilter);
+            }
+
+            if (appState.activeCategoryFilter !== 'all') {
+                filtered = filtered.filter(m => m.category === appState.activeCategoryFilter);
+            }
+
+            if (query) {
+                filtered = filtered.filter(m => 
+                    m.title.toLowerCase().includes(query) || 
+                    m.synopsis.toLowerCase().includes(query) ||
+                    m.vj.toLowerCase().includes(query) ||
+                    m.category.toLowerCase().includes(query)
+                );
+            }
+
+            renderMovies(filtered);
+        }
+
+        function renderMovies(list = appState.movies) {
+            const grid = document.getElementById('moviesGrid');
+            const totalCount = document.getElementById('totalMoviesCount');
+            if (!grid) return;
+
+            if (totalCount) totalCount.innerText = list.length;
+            grid.innerHTML = '';
+
+            if (list.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-500 font-bold">No movies found matching your current selection.</div>`;
+                return;
+            }
+
+            const userWatchlist = (appState.currentUser && appState.currentUser.watchlist) ? appState.currentUser.watchlist : [];
+
+            list.forEach(m => {
+                const isBookmarked = userWatchlist.includes(m.id);
+                const card = document.createElement('div');
+                card.className = "bg-brand-card border border-brand-border rounded-2xl overflow-hidden hover:border-brand-red/60 transition duration-300 flex flex-col group relative";
+                card.innerHTML = `
+                    <div class="relative h-64 overflow-hidden cursor-pointer" onclick="playMovieStream('${m.id}')">
+                        <img src="${m.poster}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                        
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black/40 backdrop-blur-[2px]">
+                            <div class="w-14 h-14 bg-brand-red text-white rounded-full flex items-center justify-center text-xl shadow-[0_0_25px_rgba(229,9,20,0.8)] transform group-hover:scale-110 transition duration-300">
+                                <i class="fa-solid fa-play ml-1"></i>
+                            </div>
+                        </div>
+
+                        <span class="absolute top-3 left-3 bg-brand-red text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                            <i class="fa-solid fa-language mr-1"></i>${m.vj}
+                        </span>
+                        
+                        <!-- Watchlist Bookmark Button -->
+                        <button onclick="event.stopPropagation(); toggleWatchlistMovie('${m.id}')" class="absolute top-3 right-3 bg-black/70 hover:bg-brand-red text-${isBookmarked ? 'amber-400' : 'white'} p-2 rounded-xl border border-white/10 transition shadow-lg">
+                            <i class="fa-solid fa-bookmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between gap-2">
+                                <h4 class="font-bold text-white text-base group-hover:text-brand-red transition line-clamp-1">${m.title}</h4>
+                                <span class="text-xs text-amber-400 font-bold whitespace-nowrap"><i class="fa-solid fa-star mr-1"></i>${m.rating}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1 line-clamp-2">${m.synopsis}</p>
+                        </div>
+                        <div class="pt-2 border-t border-brand-border/60 flex items-center justify-between gap-2">
+                            <button onclick="playMovieStream('${m.id}')" class="flex-1 bg-gradient-to-r from-brand-red to-brand-darkRed text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md hover:opacity-90">
+                                <i class="fa-solid fa-play text-[10px]"></i> STREAM
+                            </button>
+                            <button onclick="openDownloadModal('${m.id}')" class="bg-brand-black border border-brand-border hover:border-brand-red text-gray-300 hover:text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ================= STREAMING PLAYER CONTROLS =================
+        function playMovieStream(movieId) {
+            const movie = appState.movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            const modal = document.getElementById('videoPlayerModal');
+            const video = document.getElementById('mainVideoPlayer');
+            const title = document.getElementById('playerMovieTitle');
+            const meta = document.getElementById('playerMovieMeta');
+            const directDl = document.getElementById('playerDirectDlBtn');
+
+            if (title) title.innerText = movie.title;
+            if (meta) meta.innerText = `${movie.vj} • ${movie.year} • ${movie.category}`;
+            if (directDl) directDl.href = movie.storageLink;
+
+            if (video) {
+                video.src = movie.storageLink;
+                video.load();
+                video.play().catch(e => console.log('Autoplay restricted or video link unavailable:', e));
+            }
+
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeVideoPlayer() {
+            const modal = document.getElementById('videoPlayerModal');
+            const video = document.getElementById('mainVideoPlayer');
+            if (video) {
+                video.pause();
+                video.src = '';
+            }
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function setPlaybackSpeed(speed) {
+            const video = document.getElementById('mainVideoPlayer');
+            if (video) video.playbackRate = speed;
+        }
+
+        async function togglePiP() {
+            const video = document.getElementById('mainVideoPlayer');
+            if (!video) return;
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else if (document.pictureInPictureEnabled) {
+                    await video.requestPictureInPicture();
+                }
+            } catch (err) {
+                alert('Picture-in-Picture is not supported by this video stream or browser.');
+            }
+        }
+
+        function toggleFullScreen() {
+            const video = document.getElementById('mainVideoPlayer');
+            if (!video) return;
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            }
+        }
+
+        // ================= DOWNLOAD MODAL =================
+        function openDownloadModal(movieId) {
+            const movie = appState.movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            appState.downloadClicks++;
+            saveState();
+            updateAdminStats();
+
+            const modalContent = document.getElementById('modalContent');
+            if (modalContent) {
+                modalContent.innerHTML = `
+                    <div class="space-y-5">
+                        <div class="h-60 rounded-2xl overflow-hidden relative">
+                            <img src="${movie.poster}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-black/40 to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <span class="bg-brand-red text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">${movie.vj}</span>
+                                <h3 class="text-2xl font-black text-white mt-1">${movie.title}</h3>
+                                <p class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-star mr-1"></i>${movie.rating} &bull; ${movie.year} &bull; ${movie.category}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed">${movie.synopsis}</p>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="closeDownloadModal(); playMovieStream('${movie.id}')" class="bg-gradient-to-r from-brand-red to-brand-darkRed text-white font-bold py-3 rounded-xl text-xs hover:opacity-90 transition flex items-center justify-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-play"></i> STREAM NOW
+                            </button>
+                            <a href="${movie.storageLink}" target="_blank" class="bg-brand-black border border-brand-border text-white font-bold py-3 rounded-xl text-xs hover:border-brand-red transition text-center flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> DIRECT DOWNLOAD
+                            </a>
+                        </div>
+
+                        <div class="p-4 bg-brand-black/90 rounded-2xl border border-brand-border space-y-2">
+                            <span class="text-xs font-bold text-brand-red uppercase block"><i class="fa-solid fa-link mr-1"></i> Direct Storage Link</span>
+                            <div class="flex gap-2">
+                                <input type="text" id="dlModalLink" readonly value="${movie.storageLink}" class="w-full bg-brand-card text-xs text-gray-300 p-2.5 rounded-xl font-mono border border-brand-border focus:outline-none">
+                                <button onclick="copyStorageLink()" class="bg-brand-red hover:bg-brand-darkRed text-white px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap">Copy Link</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            const dlModal = document.getElementById('downloadModal');
+            if (dlModal) dlModal.classList.remove('hidden');
+        }
+
+        function closeDownloadModal() {
+            const dlModal = document.getElementById('downloadModal');
+            if (dlModal) dlModal.classList.add('hidden');
+        }
+
+        function copyStorageLink() {
+            const input = document.getElementById('dlModalLink');
+            if (!input) return;
+            input.select();
+            document.execCommand('copy');
+            alert("Direct storage link copied to clipboard!");
+        }
+    </script>
+</body>
+</html>
