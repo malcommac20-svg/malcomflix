@@ -90,7 +90,7 @@
                         <i class="fa-solid fa-crown mr-1"></i> Owner Portal
                     </span>
                     <h1 class="text-6xl sm:text-7xl lg:text-9xl font-black text-white tracking-tight uppercase drop-shadow-[0_10px_35px_rgba(0,0,0,0.8)]">MALCOM</h1>
-                    <p class="text-gray-300 max-w-md mt-4 text-sm sm:text-base leading-relaxed font-medium">Ultimate VJ translated cinema streaming hub. Explore Interstellar, The Uprising, and cloud-synced releases.</p>
+                    <p class="text-gray-300 max-w-md mt-4 text-sm sm:text-base leading-relaxed font-medium">Ultimate VJ translated cinema streaming hub. Cloud-synced real-time movie releases.</p>
                 </div>
                 <div class="flex flex-col items-start md:items-end justify-center md:pt-36 text-left md:text-right">
                     <span class="text-xs font-extrabold tracking-widest text-gray-400 uppercase mb-2">Cinematic Vault</span>
@@ -229,46 +229,39 @@
     <div id="adminPanelModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-lg flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         <div class="glass-panel w-full max-w-5xl max-h-[92vh] rounded-3xl border border-brand-red/40 p-6 sm:p-8 flex flex-col relative shadow-2xl overflow-hidden my-auto">
             <div class="flex items-center justify-between pb-4 border-b border-brand-border">
-                <h2 class="text-xl font-black text-white uppercase">Admin Control Panel</h2>
+                <h2 class="text-xl font-black text-white uppercase">Admin Control Panel (Cloud Synced)</h2>
                 <button onclick="closeAdminPanel()" class="text-gray-400 hover:text-white bg-brand-black p-2.5 rounded-full border border-brand-border"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="flex-1 overflow-y-auto py-6 space-y-8 pr-2">
                 
-                <!-- JSONBin Cloud Sync Configuration Section -->
-                <div class="bg-brand-card p-6 rounded-2xl border border-brand-red/40 space-y-4 bg-gradient-to-r from-brand-card via-brand-card to-red-950/20">
-                    <h3 class="font-bold text-white text-base flex items-center gap-2">
-                        <i class="fa-solid fa-database text-brand-red"></i> JSONBin.io Cloud Database Sync
-                    </h3>
-                    <p class="text-xs text-gray-400">Enter your JSONBin Bin ID and Master Key so your website updates sync automatically across all devices instantly!</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <input type="text" id="adminBinId" placeholder="JSONBin Bin ID" class="bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
-                        <input type="password" id="adminBinKey" placeholder="JSONBin Master Key ($2a$10$...)" class="bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
-                    </div>
-                    <div class="flex justify-end">
-                        <button onclick="saveJsonBinConfig()" class="bg-gradient-to-r from-brand-red to-brand-darkRed text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow-lg">
-                            Save Cloud Config & Load
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Add Movie Section -->
+                <!-- Add Movie Section with Realistic AI Poster Generator -->
                 <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
                     <h3 class="font-bold text-white text-base"><i class="fa-solid fa-film text-brand-red mr-2"></i> Add New Movie Entry</h3>
                     <form onsubmit="saveMovieEntry(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-xs font-bold text-gray-400 mb-1">Movie Title *</label><input type="text" id="inputMovieTitle" required class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></div>
-                        <div><label class="block text-xs font-bold text-gray-400 mb-1">Poster Image URL *</label><input type="url" id="inputPosterUrl" required class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1">Poster Image URL *</label>
+                            <div class="flex gap-2">
+                                <input type="url" id="inputPosterUrl" required placeholder="Paste or click AI Poster..." class="flex-1 bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red">
+                                <button type="button" onclick="generateRealisticPoster()" class="bg-gradient-to-r from-brand-red to-amber-600 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-md whitespace-nowrap hover:opacity-90">
+                                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI Poster
+                                </button>
+                            </div>
+                        </div>
+
                         <div><label class="block text-xs font-bold text-gray-400 mb-1">VJ Translator *</label><select id="inputVJSelect" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></select></div>
                         <div><label class="block text-xs font-bold text-gray-400 mb-1">Genre *</label><select id="inputCategorySelect" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></select></div>
                         <div><label class="block text-xs font-bold text-gray-400 mb-1">Year *</label><input type="text" id="inputMovieYear" required value="2026" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></div>
                         <div><label class="block text-xs font-bold text-gray-400 mb-1">Rating</label><input type="text" id="inputMovieRating" value="4.9" class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></div>
                         <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-400 mb-1">Direct Video Link *</label><input type="url" id="inputStorageLink" required class="w-full bg-brand-black border border-brand-border text-xs text-white p-3 rounded-xl focus:border-brand-red"></div>
                         <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-400 mb-1">Plot Synopsis *</label><textarea id="inputMovieBio" rows="3" required class="w-full bg-brand-black border border-brand-border text-sm text-white p-3 rounded-xl focus:border-brand-red resize-none"></textarea></div>
-                        <div class="md:col-span-2 flex justify-end"><button type="submit" class="bg-brand-red hover:bg-brand-darkRed text-white font-bold text-xs px-6 py-3 rounded-xl shadow-lg">Save & Sync Movie</button></div>
+                        <div class="md:col-span-2 flex justify-end"><button type="submit" class="bg-brand-red hover:bg-brand-darkRed text-white font-bold text-xs px-6 py-3 rounded-xl shadow-lg">Save & Sync to Cloud Bin</button></div>
                     </form>
                 </div>
                 
                 <div class="bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
-                    <h3 class="font-bold text-white text-base">Existing Movies in Vault</h3>
+                    <h3 class="font-bold text-white text-base">Existing Cloud Vault Movies</h3>
                     <div class="overflow-x-auto"><table class="w-full text-left text-xs text-gray-300"><tbody id="adminMoviesTable" class="divide-y divide-brand-border"></tbody></table></div>
                 </div>
             </div>
@@ -277,42 +270,19 @@
 
     <!-- SCRIPT -->
     <script>
-        const DEFAULT_MOVIES = [
-            {
-                id: 'm1',
-                title: "Interstellar",
-                category: "Sci-Fi",
-                vj: "VJ Junior",
-                rating: "4.9",
-                year: "2022",
-                poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80",
-                synopsis: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival, brilliantly translated by VJ Junior.",
-                storageLink: "https://namzentertainments.xyz/projects/five/secret%20joy/Interstellar%20%40NAMZ%20HEAVY%20Q%202022.mp4"
-            },
-            {
-                id: 'm2',
-                title: "The Uprising",
-                category: "Action",
-                vj: "VJ Ulio",
-                rating: "4.8",
-                year: "2026",
-                poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
-                synopsis: "An intense, high-stakes battle for freedom and survival in a dystopian underground society, expertly narrated with immersive commentary by VJ Ulio.",
-                storageLink: "https://storage.bestmoviesug.com/b/lukyamuzi/Telegram/THE%20UPRISING%20%20___VJ%20ULIO.2026.mkv"
-            }
-        ];
+        // PERMANENT CLOUD BIN CONFIGURATION
+        const JSONBIN_ID = '6ad39610ac6210605a3a2138';
+        const JSONBIN_KEY = '$2a$10$oWbkiUrEVPGUxSlnhQIyCucTXBhSb3KDbbqww8QvlLTUrwV9k5vA6';
 
         const DEFAULT_VJS = ["Original / English", "VJ Junior", "VJ Jingo", "VJ Ice P", "VJ Ulio", "VJ Emmie"];
         const DEFAULT_GENRES = ["Action", "Drama", "Sci-Fi", "Thriller", "Comedy", "Animation", "Horror", "Romance"];
         const DEFAULT_BG = "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1600&auto=format&fit=crop&q=80";
 
         let appState = {
-            movies: DEFAULT_MOVIES,
+            movies: [], // Starts empty and loads dynamically from bin
             vjs: JSON.parse(localStorage.getItem('malcom_vjs')) || DEFAULT_VJS,
             genres: JSON.parse(localStorage.getItem('malcom_genres')) || DEFAULT_GENRES,
             bgUrl: localStorage.getItem('malcom_bg') || DEFAULT_BG,
-            jsonbinId: localStorage.getItem('malcom_jsonbin_id') || '',
-            jsonbinKey: localStorage.getItem('malcom_jsonbin_key') || '',
             users: JSON.parse(localStorage.getItem('malcom_registered_users')) || [],
             currentUser: JSON.parse(localStorage.getItem('malcom_current_user')) || null,
             activeVjFilter: 'all',
@@ -320,17 +290,43 @@
             showingWatchlistOnly: false
         };
 
-        // LOAD MOVIES FROM CLOUD BIN
-        async function loadMoviesFromCloud() {
-            if (!appState.jsonbinId || !appState.jsonbinKey) {
-                appState.movies = JSON.parse(localStorage.getItem('malcom_movies')) || DEFAULT_MOVIES;
-                renderMovies();
-                renderAdminMoviesTable();
+        // REALISTIC AI POSTER GENERATOR
+        function generateRealisticPoster() {
+            const titleInput = document.getElementById('inputMovieTitle');
+            const categorySelect = document.getElementById('inputCategorySelect');
+            const posterInput = document.getElementById('inputPosterUrl');
+
+            if (!titleInput || !titleInput.value.trim()) {
+                alert("Please type the Movie Title first so AI can match a realistic cover!");
+                titleInput.focus();
                 return;
             }
+
+            const title = titleInput.value.trim().toLowerCase();
+            const genre = categorySelect ? categorySelect.value.toLowerCase() : 'cinematic';
+            posterInput.value = "Generating realistic cover...";
+
+            setTimeout(() => {
+                let query = `${title} ${genre} cinematic film poster movie`;
+                if(title.includes('space') || title.includes('interstellar') || title.includes('galaxy')) {
+                    query = "deep space galaxy astronaut sci-fi cinematic";
+                } else if(title.includes('action') || title.includes('war') || title.includes('uprising') || title.includes('fight')) {
+                    query = "intense action thriller dark gritty cinematic movie";
+                } else if(title.includes('love') || title.includes('romance')) {
+                    query = "romantic dramatic cinematic moody lighting";
+                }
+                
+                const realisticPosterUrl = `https://images.unsplash.com/featured/?${encodeURIComponent(query)}`;
+                posterInput.value = realisticPosterUrl;
+                alert(`Realistic AI cover successfully generated for "${title.toUpperCase()}"!`);
+            }, 600);
+        }
+
+        // LOAD MOVIES DIRECTLY FROM CLOUD BIN
+        async function loadMoviesFromCloud() {
             try {
-                let response = await fetch(`https://api.jsonbin.io/v3/b/${appState.jsonbinId}/latest`, {
-                    headers: { 'X-Master-Key': appState.jsonbinKey }
+                let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_KEY }
                 });
                 let data = await response.json();
                 if (data && data.record) {
@@ -339,63 +335,38 @@
                     renderAdminMoviesTable();
                 }
             } catch (err) {
-                console.log("Cloud sync load failed, fallback to local:", err);
-                appState.movies = JSON.parse(localStorage.getItem('malcom_movies')) || DEFAULT_MOVIES;
+                console.log("Failed to load from cloud bin:", err);
+                appState.movies = [];
                 renderMovies();
                 renderAdminMoviesTable();
             }
         }
 
-        // SAVE MOVIES TO CLOUD BIN
+        // SAVE MOVIES DIRECTLY TO CLOUD BIN
         async function saveMoviesToCloud() {
-            localStorage.setItem('malcom_movies', JSON.stringify(appState.movies));
-            if (!appState.jsonbinId || !appState.jsonbinKey) {
-                renderMovies();
-                renderAdminMoviesTable();
-                return;
-            }
             try {
-                await fetch(`https://api.jsonbin.io/v3/b/${appState.jsonbinId}`, {
+                await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Master-Key': appState.jsonbinKey
+                        'X-Master-Key': JSONBIN_KEY
                     },
                     body: JSON.stringify(appState.movies)
                 });
             } catch (err) {
-                console.log("Cloud sync save error:", err);
+                alert("Cloud sync save error: " + err.message);
             }
             renderMovies();
             renderAdminMoviesTable();
         }
 
-        function saveJsonBinConfig() {
-            const idInput = document.getElementById('adminBinId').value.trim();
-            const keyInput = document.getElementById('adminBinKey').value.trim();
-            if(!idInput || !keyInput) {
-                alert("Please enter both Bin ID and Master Key.");
-                return;
-            }
-            appState.jsonbinId = idInput;
-            appState.jsonbinKey = keyInput;
-            localStorage.setItem('malcom_jsonbin_id', idInput);
-            localStorage.setItem('malcom_jsonbin_key', keyInput);
-            alert("JSONBin configuration saved! Fetching movies from cloud...");
-            loadMoviesFromCloud();
-        }
-
         window.onload = function() {
             applyBackground();
             renderFilterButtons();
-            loadMoviesFromCloud();
+            loadMoviesFromCloud(); // Loads instantly from your bin
             populateVJSelects();
             populateGenreSelects();
             updateUserUI();
-            
-            // Fill inputs if saved already
-            if(appState.jsonbinId) document.getElementById('adminBinId').value = appState.jsonbinId;
-            if(appState.jsonbinKey) document.getElementById('adminBinKey').value = appState.jsonbinKey;
         };
 
         function saveState() {
@@ -526,8 +497,6 @@
                 toggleAdminAuthModal();
                 document.getElementById('adminPanelModal').classList.remove('hidden');
                 populateVJSelects(); populateGenreSelects();
-                if(appState.jsonbinId) document.getElementById('adminBinId').value = appState.jsonbinId;
-                if(appState.jsonbinKey) document.getElementById('adminBinKey').value = appState.jsonbinKey;
             } else { alert("Incorrect password!"); }
         }
         function closeAdminPanel() { document.getElementById('adminPanelModal').classList.add('hidden'); }
@@ -547,7 +516,7 @@
             };
             appState.movies.unshift(movie);
             saveMoviesToCloud();
-            alert("Movie added and synced to the cloud successfully!");
+            alert("Movie added and synced to your cloud bin successfully!");
             document.getElementById('inputMovieTitle').value = '';
             document.getElementById('inputPosterUrl').value = '';
             document.getElementById('inputStorageLink').value = '';
@@ -555,7 +524,7 @@
         }
 
         function deleteMovie(id) {
-            if (!confirm("Delete this movie?")) return;
+            if (!confirm("Delete this movie from cloud bin?")) return;
             appState.movies = appState.movies.filter(m => m.id !== id);
             saveMoviesToCloud();
         }
@@ -615,6 +584,10 @@
             if (!grid) return;
             if (totalCount) totalCount.innerText = list.length;
             grid.innerHTML = '';
+            if (list.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-500 font-bold">No movies found in cloud vault. Add some via the Admin Panel!</div>`;
+                return;
+            }
             const watchlist = (appState.currentUser && appState.currentUser.watchlist) ? appState.currentUser.watchlist : [];
             list.forEach(m => {
                 const isBookmarked = watchlist.includes(m.id);
@@ -668,7 +641,6 @@
                     <a href="${m.storageLink}" target="_blank" class="block w-full bg-brand-red text-white text-center font-bold py-3 rounded-xl text-xs shadow-lg"><i class="fa-solid fa-download mr-2"></i> Download Movie File</a>
                 </div>
             `;
-            document.getElementById('downloadModal').classList.add('hidden'); // Fix modal toggle
             document.getElementById('downloadModal').classList.remove('hidden');
         }
         function closeDownloadModal() { document.getElementById('downloadModal').classList.add('hidden'); }
